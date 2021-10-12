@@ -1,3 +1,4 @@
+using System;
 using CommandAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using Npgsql;
 
 namespace CommandAPI
@@ -22,12 +24,18 @@ namespace CommandAPI
             var builder = new NpgsqlConnectionStringBuilder();
             builder.ConnectionString = Configuration.GetConnectionString("PostgresSqlConnection");
             builder.Username = Configuration["UserId"];
-            builder.Password = Configuration["Password"];
+            builder.Password = Configuration["Password"];            
 
             services.AddScoped<ICommandAPIRepository, SqlCommandAPIRepository>();
             services.AddDbContext<CommandContext>(options => 
                 options.UseNpgsql(builder.ConnectionString));
-            services.AddControllers();
+
+            services.AddControllers().AddNewtonsoftJson(s => 
+            {
+                s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
