@@ -29,7 +29,6 @@ namespace CommandAPI.Tests
 
             // Assert
    
-            // Use Shouldly
             testCommand.HowTo.ShouldBe("Execute Unit Tests");
         }
 
@@ -43,8 +42,7 @@ namespace CommandAPI.Tests
             testCommand.Platform = "xUnit";
 
             // Assert
-            
-            // Use Shouldly
+  
             testCommand.Platform.ShouldBe("xUnit");
         }      
 
@@ -56,9 +54,8 @@ namespace CommandAPI.Tests
             // Act
             testCommand.CommandLine = "dotnet test";
 
-            // Assert
-            
-            // Use Shouldly
+            // Assert           
+  
             testCommand.CommandLine.ShouldBe("dotnet test");
         }
 
