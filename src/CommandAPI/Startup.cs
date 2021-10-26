@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CommandAPI
 {
@@ -30,6 +31,11 @@ namespace CommandAPI
             services.AddDbContext<CommandContext>(options => 
                 options.UseNpgsql(builder.ConnectionString));
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+                options.Audience = Configuration["ResourceId"];
+                options.Authority = $"{Configuration["Instance"]}{Configuration["TenantId"]}";
+            });
+
             services.AddControllers().AddNewtonsoftJson(s => 
             {
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -50,6 +56,8 @@ namespace CommandAPI
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
